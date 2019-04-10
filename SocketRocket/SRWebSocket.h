@@ -65,6 +65,7 @@ extern NSString *const SRHTTPResponseErrorKey;
 
 @property (nonatomic, readonly) SRReadyState readyState;
 @property (nonatomic, readonly, retain) NSURL *url;
+@property (nonatomic, readonly, retain) NSString *sslPeerName;
 
 
 @property (nonatomic, readonly) CFHTTPMessageRef receivedHTTPHeaders;
@@ -77,6 +78,7 @@ extern NSString *const SRHTTPResponseErrorKey;
 @property (nonatomic, readonly, copy) NSString *protocol;
 
 // Protocols should be an array of strings that turn into Sec-WebSocket-Protocol.
+- (id)initWithURLRequest:(NSURLRequest *)request protocols:(NSArray *)protocols allowsUntrustedSSLCertificates:(BOOL)allowsUntrustedSSLCertificates sslPeerName:(NSString*)sslPeerName;
 - (id)initWithURLRequest:(NSURLRequest *)request protocols:(NSArray *)protocols allowsUntrustedSSLCertificates:(BOOL)allowsUntrustedSSLCertificates;
 - (id)initWithURLRequest:(NSURLRequest *)request protocols:(NSArray *)protocols;
 - (id)initWithURLRequest:(NSURLRequest *)request;

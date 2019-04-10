@@ -262,6 +262,24 @@ static __strong NSData *CRLFCRLF;
     CRLFCRLF = [[NSData alloc] initWithBytes:"\r\n\r\n" length:4];
 }
 
+- (id)initWithURLRequest:(NSURLRequest *)request protocols:(NSArray *)protocols allowsUntrustedSSLCertificates:(BOOL)allowsUntrustedSSLCertificates
+                    sslPeerName:(NSString*)sslPeerName;
+{
+    self = [super init];
+    if (self) {
+        assert(request.URL);
+        _url = request.URL;
+        _urlRequest = request;
+        _allowsUntrustedSSLCertificates = allowsUntrustedSSLCertificates;
+        _sslPeerName = sslPeerName;
+        _requestedProtocols = [protocols copy];
+        
+        [self _SR_commonInit];
+    }
+    
+    return self;
+}
+
 - (id)initWithURLRequest:(NSURLRequest *)request protocols:(NSArray *)protocols allowsUntrustedSSLCertificates:(BOOL)allowsUntrustedSSLCertificates;
 {
     self = [super init];
@@ -596,6 +614,8 @@ static __strong NSData *CRLFCRLF;
 {
     if (_secure) {
         NSMutableDictionary *SSLOptions = [[NSMutableDictionary alloc] init];
+
+        [SSLOptions setValue:self.sslPeerName forKey:(__bridge id)kCFStreamSSLPeerName];
         
         [_outputStream setProperty:(__bridge id)kCFStreamSocketSecurityLevelNegotiatedSSL forKey:(__bridge id)kCFStreamPropertySocketSecurityLevel];
         
@@ -604,9 +624,11 @@ static __strong NSData *CRLFCRLF;
             [SSLOptions setValue:@NO forKey:(__bridge id)kCFStreamSSLValidatesCertificateChain];
         }
         
-#if DEBUG
-        self.allowsUntrustedSSLCertificates = YES;
-#endif
+// #if DEBUG
+//         self.allowsUntrustedSSLCertificates = YES;
+// #endif
+
+        self.allowsUntrustedSSLCertificates = NO;
 
         if (self.allowsUntrustedSSLCertificates) {
             [SSLOptions setValue:@NO forKey:(__bridge id)kCFStreamSSLValidatesCertificateChain];
